@@ -11,36 +11,39 @@ static class PopulationGrowthPatch {
     static bool Prefix(ObjectInfoData __instance) {
         if (!Plugin.PopulationScalingEnabled.Value) { return true; }
         try {
-            double pop = __instance.crewResource.Value;
+            var pop = __instance.crewResource.Value;
 
             if (pop < Plugin.PopMinPopulation.Value) { return false; }
 
             var (inHab, capacity) = __instance.GetPopulationHabitats();
-            double available = capacity > 0 ? Clamp01(1.0 - (double)inHab / capacity) : 0.0;
+            var available = capacity > 0 ? Clamp01(1.0 - (double)inHab / capacity) : 0.0;
 
-            double max = Plugin.PopMaxRate.Value, min = Plugin.PopMinRate.Value;
-            double plateau = Plugin.PopPlateauAvailableFraction.Value;
-            double housingRate = available >= plateau
+            var max = Plugin.PopMaxRate.Value;
+            var min = Plugin.PopMinRate.Value;
+            var plateau = Plugin.PopPlateauAvailableFraction.Value;
+            var housingRate = available >= plateau
                 ? max
                 : min + (max - min) * (plateau > 0 ? available / plateau : 0.0);
 
-            double demand = __instance.GetSupplyDemandPerDay();
+            var demand = __instance.GetSupplyDemandPerDay();
             double supplyFactor;
             if (demand <= 0.0 || __instance.supplyResource == null) {
                 supplyFactor = 1.0; // no consumption (or no supply resource yet) -> always fed
-            } else {
+            }
+            else {
                 supplyFactor = Clamp01((__instance.supplyResource.Value / demand) / Plugin.PopSupplyBufferDays.Value);
             }
 
-            double rate = housingRate * supplyFactor;
-            double d = rate * pop;
+            var rate = housingRate * supplyFactor;
+            var d = rate * pop;
 
-            int floor = Mathd.FloorToInt(d);
-            int births = floor + (UnityEngine.Random.Range(0f, 1f) < d - floor ? 1 : 0); // vanilla stochastic
+            var floor = Mathd.FloorToInt(d);
+            var births = floor + (UnityEngine.Random.Range(0f, 1f) < d - floor ? 1 : 0); // vanilla stochastic
 
             __instance.crewResource.Value = Math.Max(0.0, pop + births);
             return false;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Plugin.Log.LogWarning($"PopulationScaling failed; falling back to vanilla growth: {e}");
             return true;
         }
