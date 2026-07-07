@@ -16,6 +16,7 @@ public class Plugin : BaseUnityPlugin {
     internal static ConfigEntry<double> PopPlateauAvailableFraction = null!;
     internal static ConfigEntry<double> PopSupplyBufferDays = null!;
     internal static ConfigEntry<int> PopMinPopulation = null!;
+    internal static ConfigEntry<bool> DebugLogging = null!;
 
     void Awake() {
         Log = Logger;
@@ -55,6 +56,12 @@ public class Plugin : BaseUnityPlugin {
             "MinPopulation",
             0,
             "Population below which a colony does not grow. 0 = grow from any size (stock value was 100)."
+        );
+        DebugLogging = Config.Bind(
+            "PopulationScaling",
+            "DebugLogging",
+            false,
+            "Emit one log line per growth-tick decision. A sub-threshold colony with NO line proves the method is unsubscribed."
         );
 
         Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} loaded.");

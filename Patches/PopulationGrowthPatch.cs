@@ -13,7 +13,10 @@ static class PopulationGrowthPatch {
         try {
             var pop = __instance.crewResource.Value;
 
-            if (pop < Plugin.PopMinPopulation.Value) { return false; }
+            if (pop < Plugin.PopMinPopulation.Value) {
+                Log(__instance, pop, 0, 0, 0, 0, 0, 0, "min-pop-gated");
+                return false;
+            }
 
             var (inHab, capacity) = __instance.GetPopulationHabitats();
             var available = capacity > 0 ? Clamp01(1.0 - (double)inHab / capacity) : 0.0;
@@ -40,6 +43,7 @@ static class PopulationGrowthPatch {
             var floor = Mathd.FloorToInt(d);
             var births = floor + (UnityEngine.Random.Range(0f, 1f) < d - floor ? 1 : 0); // vanilla stochastic
 
+            Log(__instance, pop, housingRate, supplyFactor, rate, d, floor, births, "skip-vanilla");
             __instance.crewResource.Value = Math.Max(0.0, pop + births);
             return false;
         }
@@ -47,6 +51,25 @@ static class PopulationGrowthPatch {
             Plugin.Log.LogWarning($"PopulationScaling failed; falling back to vanilla growth: {e}");
             return true;
         }
+    }
+
+    static void Log(
+        ObjectInfoData inst, double pop, double housingRate, double supplyFactor,
+        double rate, double d, int floor, int births, string decision) {
+        if (!Plugin.DebugLogging.Value) { return; }
+        Plugin.Log.LogInfo(
+            $"[grow] {Identity(inst)} pop={pop:F0} minPop={Plugin.PopMinPopulation.Value} " +
+            $"housingRate={housingRate:F3} supplyFactor={supplyFactor:F3} rate={rate:F3} " +
+            $"d={d:F3} floor={floor} births={births} -> {decision}");
+    }
+
+    static string Identity(ObjectInfoData inst) {
+        try {
+            var company = inst.company != null ? inst.company.ID : "?";
+            var obj = inst.objectInfo != null ? inst.objectInfo.ObjectName : "?";
+            return $"{company}/{obj}";
+        }
+        catch { return "?"; }
     }
 
     static double Clamp01(double x) => x < 0 ? 0 : x > 1 ? 1 : x;
