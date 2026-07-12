@@ -5,7 +5,7 @@
     <AssemblyName>PopulationScaling</AssemblyName>
     <Product>PopulationScaling</Product>
     <Version>1.0.0</Version>
-    <BepInExPluginGuid>matt.solarexpanse.populationscaling</BepInExPluginGuid>
+    <BepInExPluginGuid>marr75.solarexpanse.populationscaling</BepInExPluginGuid>
   </PropertyGroup>
 
   <ItemGroup>
