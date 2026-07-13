@@ -1,53 +1,31 @@
 # Population Scaling
 
-> Replaces vanilla's population growth with a smarter model: colonies grow fast when there's
-> room and food, then ease off smoothly as housing fills up instead of jamming people in.
+> Why should a colony need 100 crew before it grows at all? PopulationScaling removes that arbitrary floor and lets you hitch onto real logistic growth: over-provision housing and supplies well beyond what's needed and your colonies grow on their own, instead of you shipping in population by hand.
 
-<!-- SCREENSHOT: hero shot — a colony's population growing over several years, housing gauge
-     alongside it. File: docs/images/populationscaling-hero.png -->
+![Two charts: annual population growth vs empty housing (base game near 1%/yr vs the mod ramping to about 10%/yr), and the small-colony dead zone the mod removes (the base game freezes colonies under 100 crew)](docs/images/populationscaling-charts.png)
 
 ## What it does
 
-- Growth speeds up when you have empty housing and slows down as it fills — a smooth "S-curve"
-  (in math terms, a *logistic* curve) instead of vanilla's flat rate. Think of it like a savings
-  account that compounds fast when there's plenty of room to grow, then tapers off as you
-  approach the limit, rather than overshooting and leaving people crammed in.
-- Growth also depends on how much stored supply (food/consumables) a colony is sitting on. Plenty
-  of buffer stock means full growth; a colony running low ramps growth down instead of starving
-  itself into a death spiral.
-- Small colonies grow too. Vanilla stops population growth entirely below 100 crew; this mod lets
-  even brand-new outposts grow from any size (configurable).
+- Growth speeds up when you have empty housing and slows down as it fills, a smooth "S-curve" (in math terms, a _logistic_ curve) instead of vanilla's flat rate. Think of it like a savings account that compounds fast when there's plenty of room to grow, then tapers off as you approach the limit, rather than overshooting and leaving people crammed in.
+- Growth also depends on how much stored supply (food/consumables) a colony is sitting on. Plenty of buffer stock means full growth; a colony running low ramps growth down instead of starving itself into a death spiral.
+- Small colonies grow too. Vanilla stops population growth entirely below 100 crew; this mod lets even brand-new outposts grow from any size (configurable).
 - Fully reversible: turn the mod off and growth reverts to vanilla's flat-rate behavior.
 
 ## Before / after
 
-Vanilla: population grows at a flat rate regardless of how full housing is, and can overcrowd a
-colony past its housing capacity. This mod: growth peaks when housing has room, tapers smoothly
-to zero as capacity fills, and eases off if stored supply runs thin — no overcrowding, no
-starvation spirals.
+Vanilla: population grows at a flat rate regardless of how full housing is, and can overcrowd a colony past its housing capacity. This mod: growth peaks when housing has room, tapers smoothly to zero as capacity fills, and eases off if stored supply runs thin, with no overcrowding or starvation spirals.
 
 ## Configuration
 
 The knobs most worth touching:
 
-- **MaxRate** — the fastest a colony can grow (as a fraction of its population per year) when
-  it has plenty of empty housing and supply. Raise this for a faster-paced game, lower it to slow
-  colonies down.
-- **PlateauAvailableFraction** — how much empty housing a colony needs (as a fraction of its
-  total capacity) to hit MaxRate. Below that threshold, growth tapers off the closer housing gets
-  to full. Lower this if you want colonies to keep growing fast even with less room to spare.
-- **SupplyBufferDays** — how many days of stored supply a colony needs on hand to grow at full
-  speed. Running below that many days' worth of buffer proportionally slows growth. Raise this if
-  you want colonies to play it safer with their stockpiles before growing.
+- **MaxRate**: the fastest a colony can grow (as a fraction of its population per year) when it has plenty of empty housing and supply. Raise this for a faster-paced game, lower it to slow colonies down.
+- **PlateauAvailableFraction**: how much empty housing a colony needs (as a fraction of its total capacity) to hit MaxRate. Below that threshold, growth tapers off the closer housing gets to full. Lower this if you want colonies to keep growing fast even with less room to spare.
+- **SupplyBufferDays**: how many days of stored supply a colony needs on hand to grow at full speed. Running below that many days' worth of buffer proportionally slows growth. Raise this if you want colonies to play it safer with their stockpiles before growing.
 
-Everything else (MinRate, MinPopulation, DebugLogging) is a fine-tuning or diagnostic knob — see
-the full recommendations doc for details if you want to dig deeper.
+Everything else (MinRate, MinPopulation, DebugLogging) is a fine-tuning or diagnostic knob. See the full recommendations doc for details if you want to dig deeper.
 
-The config file lives at `BepInEx/config/marr75.solarexpanse.populationscaling.cfg` and can also
-be edited in-game if you have the Configuration Manager mod installed.
-
-<!-- SCREENSHOT: config panel showing MaxRate, PlateauAvailableFraction, SupplyBufferDays.
-     File: docs/images/populationscaling-config.png -->
+The config file lives at `BepInEx/config/marr75.solarexpanse.populationscaling.cfg` and can also be edited in-game if you have the Configuration Manager mod installed.
 
 ## Requirements
 
@@ -60,5 +38,4 @@ be edited in-game if you have the Configuration Manager mod installed.
 
 ## Building (developers)
 
-`dotnet build` deploys the DLL to the game's plugins folder via the post-build target. See
-`AGENTS.md` for the full build/deploy setup.
+`dotnet build` deploys the DLL to the game's plugins folder via the post-build target. See `AGENTS.md` for the full build/deploy setup.
