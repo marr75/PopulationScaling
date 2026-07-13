@@ -1,6 +1,7 @@
 using System;
 using Game.ObjectInfoDataScripts;
 using HarmonyLib;
+using PopulationScaling.Core;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,11 +11,11 @@ namespace PopulationScaling.Patches;
 static class PopulationGrowthPatch {
     [HarmonyPrefix]
     static bool Prefix(ObjectInfoData __instance) {
-        if (!Plugin.PopulationScalingEnabled.Value) { return true; }
+        if (!Services.Config.Enabled.Value) { return true; }
         try {
             var pop = __instance.crewResource.Value;
 
-            if (pop < Plugin.PopMinPopulation.Value) {
+            if (pop < Services.Config.MinPopulation.Value) {
                 Log(__instance, pop, 0, 0, 0, 0, 0, 0, "min-pop-gated");
                 return false;
             }
@@ -22,9 +23,9 @@ static class PopulationGrowthPatch {
             var (inHab, capacity) = __instance.GetPopulationHabitats();
             var available = capacity > 0 ? Clamp01(1.0 - (double)inHab / capacity) : 0.0;
 
-            var max = Plugin.PopMaxRate.Value;
-            var min = Plugin.PopMinRate.Value;
-            var plateau = Plugin.PopPlateauAvailableFraction.Value;
+            var max = Services.Config.MaxRate.Value;
+            var min = Services.Config.MinRate.Value;
+            var plateau = Services.Config.PlateauAvailableFraction.Value;
             var housingRate = available >= plateau
                 ? max
                 : min + (max - min) * (plateau > 0 ? available / plateau : 0.0);
@@ -35,7 +36,9 @@ static class PopulationGrowthPatch {
                 supplyFactor = 1.0; // no consumption (or no supply resource yet) -> always fed
             }
             else {
-                supplyFactor = Clamp01(__instance.supplyResource.Value / demand / Plugin.PopSupplyBufferDays.Value);
+                supplyFactor = Clamp01(
+                    __instance.supplyResource.Value / demand / Services.Config.SupplyBufferDays.Value
+                );
             }
 
             var rate = housingRate * supplyFactor;
@@ -65,9 +68,9 @@ static class PopulationGrowthPatch {
         int births,
         string decision
     ) {
-        if (!Plugin.DebugLogging.Value) { return; }
+        if (!Services.Config.DebugLogging.Value) { return; }
         Plugin.Log.LogInfo(
-            $"[grow] {Identity(inst)} pop={pop:F0} minPop={Plugin.PopMinPopulation.Value} "
+            $"[grow] {Identity(inst)} pop={pop:F0} minPop={Services.Config.MinPopulation.Value} "
             + $"housingRate={housingRate:F3} supplyFactor={supplyFactor:F3} rate={rate:F3} "
             + $"d={d:F3} floor={floor} births={births} -> {decision}"
         );

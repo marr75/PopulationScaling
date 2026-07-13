@@ -1,27 +1,64 @@
-# PopulationScaling
+# Population Scaling
 
-A BepInEx 5 (Harmony) plugin for **Solar Expanse** that replaces vanilla colony
-population growth with a configurable, supply-and-housing-aware model:
+> Replaces vanilla's population growth with a smarter model: colonies grow fast when there's
+> room and food, then ease off smoothly as housing fills up instead of jamming people in.
 
-- **Logistic growth curve** — annual growth ramps from a peak rate down toward zero as a colony fills its housing ceiling, so colonies plateau instead of overshooting.
-- **Housing headroom drives the rate** — full `MaxRate` applies while enough of the ceiling is empty (`PlateauAvailableFraction`); below that it tapers linearly to `MinRate` at capacity.
-- **Supply-gated** — stored supply below `SupplyBufferDays` ramps the growth rate down proportionally, reaching zero at empty stock.
-- **Grows from any size** — removes the vanilla floor that stalled growth below 100 population (`MinPopulation`, default 0).
-- **Master toggle + debug logging** — disable to restore vanilla growth; optional per-tick log lines for diagnosing growth decisions.
+<!-- SCREENSHOT: hero shot — a colony's population growing over several years, housing gauge
+     alongside it. File: docs/images/populationscaling-hero.png -->
 
-Plugin GUID: `marr75.solarexpanse.populationscaling`
+## What it does
 
-## Build
+- Growth speeds up when you have empty housing and slows down as it fills — a smooth "S-curve"
+  (in math terms, a *logistic* curve) instead of vanilla's flat rate. Think of it like a savings
+  account that compounds fast when there's plenty of room to grow, then tapers off as you
+  approach the limit, rather than overshooting and leaving people crammed in.
+- Growth also depends on how much stored supply (food/consumables) a colony is sitting on. Plenty
+  of buffer stock means full growth; a colony running low ramps growth down instead of starving
+  itself into a death spiral.
+- Small colonies grow too. Vanilla stops population growth entirely below 100 crew; this mod lets
+  even brand-new outposts grow from any size (configurable).
+- Fully reversible: turn the mod off and growth reverts to vanilla's flat-rate behavior.
 
-1. Set the `SOLAR_EXPANSE_DIR` environment variable to your Solar Expanse install path
-   (the folder containing `Solar Expanse_Data\Managed`).
-2. Run `dotnet build`.
+## Before / after
 
-The post-build `DeployToPlugins` target copies the DLL to
-`%SOLAR_EXPANSE_DIR%\BepInEx\plugins\PopulationScaling\`, so a successful build is a deployed build.
+Vanilla: population grows at a flat rate regardless of how full housing is, and can overcrowd a
+colony past its housing capacity. This mod: growth peaks when housing has room, tapers smoothly
+to zero as capacity fills, and eases off if stored supply runs thin — no overcrowding, no
+starvation spirals.
 
-Override the path per-build without the env var via `dotnet build -p:GameDir="..."`.
+## Configuration
 
-## License
+The knobs most worth touching:
 
-License: MIT (see LICENSE)
+- **MaxRate** — the fastest a colony can grow (as a fraction of its population per year) when
+  it has plenty of empty housing and supply. Raise this for a faster-paced game, lower it to slow
+  colonies down.
+- **PlateauAvailableFraction** — how much empty housing a colony needs (as a fraction of its
+  total capacity) to hit MaxRate. Below that threshold, growth tapers off the closer housing gets
+  to full. Lower this if you want colonies to keep growing fast even with less room to spare.
+- **SupplyBufferDays** — how many days of stored supply a colony needs on hand to grow at full
+  speed. Running below that many days' worth of buffer proportionally slows growth. Raise this if
+  you want colonies to play it safer with their stockpiles before growing.
+
+Everything else (MinRate, MinPopulation, DebugLogging) is a fine-tuning or diagnostic knob — see
+the full recommendations doc for details if you want to dig deeper.
+
+The config file lives at `BepInEx/config/marr75.solarexpanse.populationscaling.cfg` and can also
+be edited in-game if you have the Configuration Manager mod installed.
+
+<!-- SCREENSHOT: config panel showing MaxRate, PlateauAvailableFraction, SupplyBufferDays.
+     File: docs/images/populationscaling-config.png -->
+
+## Requirements
+
+- Solar Expanse + BepInEx 5 (Mono/x64).
+
+## Install
+
+1. Install BepInEx 5.
+2. Drop the `PopulationScaling` folder into `BepInEx/plugins/`.
+
+## Building (developers)
+
+`dotnet build` deploys the DLL to the game's plugins folder via the post-build target. See
+`AGENTS.md` for the full build/deploy setup.

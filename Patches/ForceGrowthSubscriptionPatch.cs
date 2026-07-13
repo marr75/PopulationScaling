@@ -1,5 +1,6 @@
 using Game.ObjectInfoDataScripts;
 using HarmonyLib;
+using PopulationScaling.Core;
 
 namespace PopulationScaling.Patches;
 
@@ -11,7 +12,7 @@ namespace PopulationScaling.Patches;
 // Prefix then stays the single growth floor via PopMinPopulation.
 static class ForceGrowthSubscriptionPatch {
     static void ZeroMinPopulation(ObjectInfoData instance) {
-        if (!Plugin.PopulationScalingEnabled.Value) { return; }
+        if (!Services.Config.Enabled.Value) { return; }
         var company = instance.company;
         if (company == null) { return; }
         var config = company.Definition?.PopulationConfig;
