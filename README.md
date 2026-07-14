@@ -2,7 +2,7 @@
 
 > Why should a colony need 100 crew before it grows at all? PopulationScaling removes that arbitrary floor and lets you hitch onto real logistic growth: over-provision housing and supplies well beyond what's needed and your colonies grow on their own, instead of you shipping in population by hand.
 
-![Two charts: annual population growth vs empty housing (base game near 1%/yr vs the mod ramping to about 10%/yr), and the small-colony dead zone the mod removes (the base game freezes colonies under 100 crew)](docs/images/populationscaling-charts.png)
+![Two charts: a colony's logistic growth curve from 25 crew to a capacity of 400, with the annual growth rate holding near 10%/yr until housing passes half full and then tapering to zero (left), and the same model's response to a +50 crew immigration shock at year 15, which dips the growth rate before it re-converges toward capacity (right)](docs/images/populationscaling-charts.png)
 
 ## What it does
 
