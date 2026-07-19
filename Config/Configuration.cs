@@ -3,6 +3,8 @@ using BepInEx.Configuration;
 namespace PopulationScaling.Config;
 
 sealed class Configuration {
+    public readonly ConfigEntry<bool> CommSatGrowthFix;
+    public readonly ConfigEntry<double> CommSatGrowthBonus;
     public readonly ConfigEntry<bool> DebugLogging;
     public readonly ConfigEntry<bool> Enabled;
     public readonly ConfigEntry<double> MaxRate;
@@ -50,6 +52,20 @@ sealed class Configuration {
             + "outpost grow; vanilla's built-in floor was 100 crew, meaning small colonies never grew on "
             + "their own.";
         MinPopulation = c.Bind("PopulationScaling", "MinPopulation", 0, minPopulationDescription);
+
+        const string commSatGrowthFixDescription =
+            "Restores the intended communication-satellite growth bonus, which the base game currently "
+            + "computes from the satellite's own orbit (always zero coverage) so it never applies. On, the "
+            + "bonus is derived once per colony from that colony's own communication coverage. Off, the mod "
+            + "defers to the base game's (currently no-op) facility growth modifiers instead.";
+        CommSatGrowthFix = c.Bind("PopulationScaling", "CommSatGrowthFix", true, commSatGrowthFixDescription);
+
+        const string commSatGrowthBonusDescription =
+            "How much fully-covered communication raises a colony's growth, as a fraction. 0.10 means a "
+            + "colony with full coverage grows 10% faster; partial coverage scales linearly. Coverage is "
+            + "a colony-wide figure, so extra satellites help only by covering more people, never by "
+            + "stacking. Matches the base game's intended default.";
+        CommSatGrowthBonus = c.Bind("PopulationScaling", "CommSatGrowthBonus", 0.10, commSatGrowthBonusDescription);
 
         const string debugLoggingDescription =
             "Writes one log line per colony every time this mod's growth calculation runs, showing the "

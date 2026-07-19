@@ -13,46 +13,18 @@ static class PopulationGrowthPatch {
     static bool Prefix(ObjectInfoData __instance) {
         if (!Services.Config.Enabled.Value) { return true; }
         try {
-            var pop = __instance.crewResource.Value;
-
-            if (pop < Services.Config.MinPopulation.Value) {
-                Log(__instance, pop, 0, 0, 0, 0, 0, 0, 0, "min-pop-gated");
+            var est = GrowthMath.Estimate(__instance);
+            if (!est.Eligible) {
+                Log(__instance, est.Pop, 0, 0, 0, 0, 0, 0, 0, "min-pop-gated");
                 return false;
             }
 
-            var (inHab, capacity) = __instance.GetPopulationHabitats();
-            var available = capacity > 0 ? Clamp01(1.0 - (double)inHab / capacity) : 0.0;
-
-            var max = Services.Config.MaxRate.Value;
-            var min = Services.Config.MinRate.Value;
-            var plateau = Services.Config.PlateauAvailableFraction.Value;
-            var housingRate = available >= plateau
-                ? max
-                : min + (max - min) * (plateau > 0 ? available / plateau : 0.0);
-
-            var demand = __instance.GetSupplyDemandPerDay();
-            double supplyFactor;
-            if (demand <= 0.0 || __instance.supplyResource == null) {
-                supplyFactor = 1.0; // no consumption (or no supply resource yet) -> always fed
-            }
-            else {
-                supplyFactor = Clamp01(
-                    __instance.supplyResource.Value / demand / Services.Config.SupplyBufferDays.Value
-                );
-            }
-
-            var rate = housingRate * supplyFactor;
-            var d = rate * pop;
-
-            __instance.UpdateFacilityRelatedSummaries(false, true);
-            var growthModifier = __instance.accumNaturalGrowthModifiers;
-            if (d > 0.0) { d *= growthModifier; }
-
+            var d = est.ExpectedBirths;
             var floor = Mathd.FloorToInt(d);
             var births = floor + (Random.Range(0f, 1f) < d - floor ? 1 : 0); // vanilla stochastic
 
-            Log(__instance, pop, housingRate, supplyFactor, rate, growthModifier, d, floor, births, "skip-vanilla");
-            __instance.crewResource.Value = Math.Max(0.0, pop + births);
+            Log(__instance, est.Pop, est.HousingRate, est.SupplyFactor, est.Rate, est.CommModifier, d, floor, births, "skip-vanilla");
+            __instance.crewResource.Value = Math.Max(0.0, est.Pop + births);
             return false;
         }
         catch (Exception e) {
@@ -89,6 +61,4 @@ static class PopulationGrowthPatch {
         }
         catch { return "?"; }
     }
-
-    static double Clamp01(double x) => x < 0 ? 0 : x > 1 ? 1 : x;
 }
