@@ -4,7 +4,7 @@
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>PopulationScaling</AssemblyName>
     <Product>PopulationScaling</Product>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <BepInExPluginGuid>marr75.solarexpanse.populationscaling</BepInExPluginGuid>
   </PropertyGroup>
 
