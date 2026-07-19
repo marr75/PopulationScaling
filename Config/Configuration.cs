@@ -20,8 +20,8 @@ sealed class Configuration {
 
         const string maxRateDescription =
             "The fastest a colony can grow in a year (as a fraction of its current population) when it "
-            + "has plenty of empty housing and stored supply. 0.10 means up to 10% growth a year at best.";
-        MaxRate = c.Bind("PopulationScaling", "MaxRate", 0.10, maxRateDescription);
+            + "has plenty of empty housing and stored supply. 0.05 means up to 5% growth a year at best.";
+        MaxRate = c.Bind("PopulationScaling", "MaxRate", 0.05, maxRateDescription);
 
         const string minRateDescription =
             "The slowest a colony can grow once housing is nearly full or stored supply is nearly out. "

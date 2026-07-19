@@ -1,6 +1,8 @@
 # Population Scaling
 
-> Why should a colony need 100 crew before it grows at all? PopulationScaling removes that arbitrary floor and lets you hitch onto real logistic growth: over-provision housing and supplies well beyond what's needed and your colonies grow on their own, instead of you shipping in population by hand.
+Why should a colony need 100 crew before it grows at all? PopulationScaling removes that arbitrary floor and lets you hitch onto real logistic growth: over-provision housing and supplies well beyond what's needed and your colonies grow on their own, instead of you shipping in population by hand.
+
+![Showing off the updated tooltip which shows how much growth to expect and what factors are influencing it](docs/images/populationscaling-tooltip.png)
 
 ![Two charts: a colony's logistic growth curve from 25 crew to a capacity of 400, with the annual growth rate holding near 10%/yr until housing passes half full and then tapering to zero (left), and the same model's response to a +50 crew immigration shock at year 15, which dips the growth rate before it re-converges toward capacity (right)](docs/images/populationscaling-charts.png)
 

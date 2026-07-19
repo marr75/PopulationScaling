@@ -33,8 +33,10 @@ static class HumanGrowthTooltipPatch {
             return $"<b>Projected growth</b> +0 / yr  (pop below {Services.Config.MinPopulation.Value})";
         }
         var births = (int)est.ExpectedBirths;
+        var baseRate = Services.Config.MaxRate.Value;
+        var housingFactor = baseRate > 0.0 ? est.HousingRate / baseRate : 0.0;
         return $"<b>Projected growth</b> +{births} / yr\n"
-            + $"housing {est.HousingRate * 100.0:0.#}%  supply {est.SupplyFactor * 100.0:0.#}%  "
-            + $"comms +{(est.CommModifier - 1.0) * 100.0:0.#}%";
+            + $"{baseRate * 100.0:0}% x {housingFactor:0.0} {GameIcons.Habitat} x "
+            + $"{est.SupplyFactor:0.0} {GameIcons.Supply} x {est.CommModifier:0.0} {GameIcons.CommSat}";
     }
 }
