@@ -16,7 +16,7 @@ static class PopulationGrowthPatch {
             var pop = __instance.crewResource.Value;
 
             if (pop < Services.Config.MinPopulation.Value) {
-                Log(__instance, pop, 0, 0, 0, 0, 0, 0, "min-pop-gated");
+                Log(__instance, pop, 0, 0, 0, 0, 0, 0, 0, "min-pop-gated");
                 return false;
             }
 
@@ -44,10 +44,14 @@ static class PopulationGrowthPatch {
             var rate = housingRate * supplyFactor;
             var d = rate * pop;
 
+            __instance.UpdateFacilityRelatedSummaries(false, true);
+            var growthModifier = __instance.accumNaturalGrowthModifiers;
+            if (d > 0.0) { d *= growthModifier; }
+
             var floor = Mathd.FloorToInt(d);
             var births = floor + (Random.Range(0f, 1f) < d - floor ? 1 : 0); // vanilla stochastic
 
-            Log(__instance, pop, housingRate, supplyFactor, rate, d, floor, births, "skip-vanilla");
+            Log(__instance, pop, housingRate, supplyFactor, rate, growthModifier, d, floor, births, "skip-vanilla");
             __instance.crewResource.Value = Math.Max(0.0, pop + births);
             return false;
         }
@@ -63,6 +67,7 @@ static class PopulationGrowthPatch {
         double housingRate,
         double supplyFactor,
         double rate,
+        double growthModifier,
         double d,
         int floor,
         int births,
@@ -72,7 +77,7 @@ static class PopulationGrowthPatch {
         Plugin.Log.LogInfo(
             $"[grow] {Identity(inst)} pop={pop:F0} minPop={Services.Config.MinPopulation.Value} "
             + $"housingRate={housingRate:F3} supplyFactor={supplyFactor:F3} rate={rate:F3} "
-            + $"d={d:F3} floor={floor} births={births} -> {decision}"
+            + $"growthMod={growthModifier:F3} d={d:F3} floor={floor} births={births} -> {decision}"
         );
     }
 
