@@ -4,6 +4,8 @@ Why should a colony need 100 crew before it grows at all? PopulationScaling remo
 
 ![Showing off the updated tooltip which shows how much growth to expect and what factors are influencing it](docs/images/populationscaling-tooltip.png)
 
+Hover a colony's population and the tooltip now shows this mod's own numbers instead of vanilla's (which no longer match how the mod grows colonies). The **+N / yr** line is the population you can expect the colony to gain at its next growth tick. Below it is the multiplication that produces that number: the base growth rate, times a housing factor (0 to 1, how much empty housing there is), times a supply factor (0 to 1, how well-stocked it is), times the CommSat coverage multiplier — each factor tagged with its habitat, supply, and comm-satellite icon.
+
 ![Two charts: a colony's logistic growth curve from 25 crew to a capacity of 400, with the annual growth rate holding near 10%/yr until housing passes half full and then tapering to zero (left), and the same model's response to a +50 crew immigration shock at year 15, which dips the growth rate before it re-converges toward capacity (right)](docs/images/populationscaling-charts.png)
 
 ## What it does
@@ -23,7 +25,11 @@ Vanilla: population grows at a flat rate regardless of how full housing is, and 
 The knobs most worth touching:
 
 - **MaxRate
-  **: the fastest a colony can grow (as a fraction of its population per year) when it has plenty of empty housing and supply. Raise this for a faster-paced game, lower it to slow colonies down.
+  **: the fastest a colony can grow (as a fraction of its population per year) when it has plenty of empty housing and supply. Defaults to 5%. Raise this for a faster-paced game, lower it to slow colonies down.
+- **CommSatGrowthFix
+  **: on by default. Restores the communication-satellite growth bonus, which the base game currently reads from the satellite's own orbit (always zero coverage) so it never actually applies. On, the bonus comes from the colony's own communication coverage. Turn it off to defer to the base game's (currently no-op) behavior.
+- **CommSatGrowthBonus
+  **: how much full communication coverage speeds up growth, as a fraction. 0.10 (the default) means a fully-covered colony grows 10% faster; partial coverage scales down linearly. Coverage is colony-wide, so extra satellites only help by covering more people — they never stack.
 - **PlateauAvailableFraction
   **: how much empty housing a colony needs (as a fraction of its total capacity) to hit MaxRate. Below that threshold, growth tapers off the closer housing gets to full. Lower this if you want colonies to keep growing fast even with less room to spare.
 - **SupplyBufferDays
