@@ -1,0 +1,29 @@
+[config]
+schemaVersion = "0.0.1"
+
+[package]
+namespace = "marr75"
+name = "PopulationScaling"
+versionNumber = "0.0.0"
+description = "Removes the arbitrary population floor and lets colonies grow on real logistic growth: over-provision housing and supplies and they grow on their own."
+websiteUrl = "https://github.com/marr75/PopulationScaling"
+containsNsfwContent = false
+
+[package.dependencies]
+BepInEx-BepInExPack = "5.4.2100" # TODO(verify): confirm exact Thunderstore dependency string + version
+
+[build]
+icon = "./icon.png"
+readme = "./README.md"
+outdir = "./artifacts/thunderstore"
+
+[[build.copy]]
+source = "./staging/BepInEx/plugins/PopulationScaling/"
+target = "./BepInEx/plugins/PopulationScaling/"
+
+[publish]
+repository = "https://thunderstore.io"
+communities = ["solar-expanse"] # TODO(pending ecosystem-schema PR): confirm community slug
+
+[publish.categories]
+solar-expanse = ["mods"]
